@@ -39,12 +39,12 @@ namespace SQSDemoBackgroundService
             }
         }
         
-        private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int maxMessages = 1)
+        private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int waitTime = 0, int maxMessages = 1)
         {
             var request = new ReceiveMessageRequest
             {
                 QueueUrl = queueUrl,
-                WaitTimeSeconds = 10,
+                WaitTimeSeconds = waitTime,
                 MaxNumberOfMessages = maxMessages
             };
 
