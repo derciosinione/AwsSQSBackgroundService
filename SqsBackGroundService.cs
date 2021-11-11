@@ -50,7 +50,7 @@ namespace SQSDemoBackgroundService
                         if (result)
                         {
                             Console.WriteLine($"{msg.MessageId} processed with success");
-                            // await DeleteMessageAsync(awsSqsClient, queueUrl, msg.ReceiptHandle);
+                            await DeleteMessageAsync(awsSqsClient, queueUrl, msg.ReceiptHandle);
                         }
                     }
                 }
@@ -67,6 +67,7 @@ namespace SQSDemoBackgroundService
             Console.WriteLine(msg.Body);
             return true;
         }
+        
         private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int waitTime = 0, int maxMessages = 1)
         {
             var request = new ReceiveMessageRequest
@@ -81,15 +82,9 @@ namespace SQSDemoBackgroundService
             return messages.Messages;
         }
 
-        private static async Task DeleteMessageAsync(IAmazonSQS client, string queueUrl, string id)
+        private static async Task DeleteMessageAsync(IAmazonSQS client, string queueUrl, string messageReceiptHandle)
         {
-            var request = new DeleteMessageRequest
-            {
-                QueueUrl = queueUrl,
-                ReceiptHandle = id
-            };
-
-            await client.DeleteMessageAsync(request);
+            await client.DeleteMessageAsync(queueUrl, messageReceiptHandle);
         }
         
         private static async Task<string> GetQueueUrl(IAmazonSQS client, string queueName)
