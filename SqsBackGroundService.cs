@@ -53,6 +53,17 @@ namespace SQSDemoBackgroundService
             return messages.Messages;
         }
 
+        private static async Task DeleteMessageAsync(IAmazonSQS client, string queueUrl, string id)
+        {
+            var request = new DeleteMessageRequest
+            {
+                QueueUrl = queueUrl,
+                ReceiptHandle = id
+            };
+
+            await client.DeleteMessageAsync(request);
+        }
+        
         private static async Task<string> GetQueueUrl(IAmazonSQS client, string queueName)
         {
             try
