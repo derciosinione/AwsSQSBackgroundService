@@ -31,44 +31,24 @@ namespace SQSDemoBackgroundService
             await Start(awsSqsClient, queueUrl, stoppingToken);
         }
 
-        private async Task Start(AmazonSQSClient awsSqsClient, string queueUrl, CancellationToken stoppingToken)
+        private async Task Start(AmazonSQSClient sqsClient, string queueUrl, CancellationToken stoppingToken)
         {
             Console.WriteLine($"Starting polling queue at {queueUrl}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var messages = await ReceiveMessageAsync(awsSqsClient, queueUrl, 10);
-
-                if (messages.Any())
-                {
-                    Console.WriteLine($"{messages.Count} messages received");
-
-                    foreach (var msg in messages)
-                    {
-                        var result = ProcessMessage(msg);
-
-                        if (result)
-                        {
-                            Console.WriteLine($"{msg.MessageId} processed with success");
-                            await DeleteMessageAsync(awsSqsClient, queueUrl, msg.ReceiptHandle);
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"---> There is no message available");
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-                }
+                var messages = await ReceiveMessageAsync(sqsClient, queueUrl, 10, 10);
+                await ReadMessageAsync(sqsClient, queueUrl, messages, stoppingToken);
             }
         }
 
-        private static async Task ReadMessageAsync(IAmazonSQS sqsClient, string queueUrl, ReceiveMessageResponse response, CancellationToken stoppingToken)
+        private static async Task ReadMessageAsync(IAmazonSQS sqsClient, string queueUrl, List<Message> messages, CancellationToken stoppingToken)
         {
-            if (response.Messages.Any())
+            if (messages.Any())
             {
-                Console.WriteLine($"{response.Messages.Count} messages received");
+                Console.WriteLine($"{messages.Count} messages received");
 
-                foreach (var msg in response.Messages)
+                foreach (var msg in messages)
                 {
                     var result = ProcessMessage(msg);
 
@@ -88,7 +68,7 @@ namespace SQSDemoBackgroundService
         
         private static bool ProcessMessage(Message msg)
         {
-            Console.WriteLine(msg.Body);
+            Console.WriteLine($"----> Recived Message {msg.Body}");
             return true;
         }
         
