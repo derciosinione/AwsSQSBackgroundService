@@ -41,11 +41,14 @@ namespace SQSDemoBackgroundService
             }
             catch (QueueDoesNotExistException)
             {
+                Console.WriteLine($"---> The Queue {queueName} does not existis!!!");
+
                 var response = await client.CreateQueueAsync(new CreateQueueRequest()
                 {
                     QueueName = queueName
                 });
-
+                
+                Console.WriteLine($"---> The Queue {queueName} has been created!!!");
                 return response.QueueUrl;
             }
         }
