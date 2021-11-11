@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
@@ -25,9 +26,33 @@ namespace SQSDemoBackgroundService
             var awsSqsConfigurations = _configuration.GetSection("AwsSqsConfigurations");
             var queueName = awsSqsConfigurations.GetValue<string>("QueueName");
             var queueUrl = await GetQueueUrl(awsSqsClient, queueName);
+            
+            await Start(awsSqsClient, queueUrl, stoppingToken);
         }
 
-       
+        private async Task Start(AmazonSQSClient awsSqsClient, string queueUrl, CancellationToken stoppingToken)
+        {
+            Console.WriteLine($"Starting polling queue at {queueUrl}");
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+            }
+        }
+        
+        private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int maxMessages = 1)
+        {
+            var request = new ReceiveMessageRequest
+            {
+                QueueUrl = queueUrl,
+                WaitTimeSeconds = 10,
+                MaxNumberOfMessages = maxMessages
+            };
+
+            var messages = await client.ReceiveMessageAsync(request);
+            
+            return messages.Messages;
+        }
+
         private static async Task<string> GetQueueUrl(IAmazonSQS client, string queueName)
         {
             try
