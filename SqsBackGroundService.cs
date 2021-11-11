@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +20,14 @@ namespace SQSDemoBackgroundService
         
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var client = CreateClient();
+            var awsSqsClient = new AmazonSQSClient(RegionEndpoint.USEast1);
+
+            var awsSqsConfigurations = _configuration.GetSection("AwsSqsConfigurations");
+            var queueName = awsSqsConfigurations.GetValue<string>("QueueName");
+            var queueUrl = await GetQueueUrl(awsSqsClient, queueName);
         }
 
+       
         private static async Task<string> GetQueueUrl(IAmazonSQS client, string queueName)
         {
             try
