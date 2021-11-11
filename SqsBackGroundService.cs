@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
@@ -36,9 +37,31 @@ namespace SQSDemoBackgroundService
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                var messages = await ReceiveMessageAsync(awsSqsClient, queueUrl, 10, 10);
+
+                if (messages.Any())
+                {
+                    Console.WriteLine($"{messages.Count} messages received");
+
+                    foreach (var msg in messages)
+                    {
+                        var result = ProcessMessage(msg);
+
+                        if (result)
+                        {
+                            Console.WriteLine($"{msg.MessageId} processed with success");
+                            // await DeleteMessageAsync(awsSqsClient, queueUrl, msg.ReceiptHandle);
+                        }
+                    }
+                }
             }
         }
         
+        private static bool ProcessMessage(Message msg)
+        {
+            Console.WriteLine(msg.Body);
+            return true;
+        }
         private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int waitTime = 0, int maxMessages = 1)
         {
             var request = new ReceiveMessageRequest
