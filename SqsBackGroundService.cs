@@ -37,7 +37,7 @@ namespace SQSDemoBackgroundService
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var messages = await ReceiveMessageAsync(awsSqsClient, queueUrl, 10, 10);
+                var messages = await ReceiveMessageAsync(awsSqsClient, queueUrl, 10);
 
                 if (messages.Any())
                 {
@@ -53,6 +53,11 @@ namespace SQSDemoBackgroundService
                             // await DeleteMessageAsync(awsSqsClient, queueUrl, msg.ReceiptHandle);
                         }
                     }
+                }
+                else
+                {
+                    Console.WriteLine($"---> There is no message available");
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }
             }
         }
