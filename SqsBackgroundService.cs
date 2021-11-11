@@ -11,11 +11,11 @@ using Microsoft.Extensions.Hosting;
 
 namespace SQSDemoBackgroundService
 {
-    public class SqsBackGroundService : BackgroundService
+    public class SqsBackgroundService : BackgroundService
     {
         private readonly IConfiguration _configuration;
 
-        public SqsBackGroundService(IConfiguration configuration)
+        public SqsBackgroundService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -37,7 +37,7 @@ namespace SQSDemoBackgroundService
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var messages = await ReceiveMessageAsync(sqsClient, queueUrl, 10, 10);
+                var messages = await ReceiveMessageAsync(sqsClient, queueUrl);
                 await ReadMessageAsync(sqsClient, queueUrl, messages, stoppingToken);
             }
         }
@@ -59,11 +59,11 @@ namespace SQSDemoBackgroundService
                     }
                 }
             }
-            else
-            {
-                Console.WriteLine($"---> There is no message available");
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-            }
+            // else
+            // {
+            //     Console.WriteLine($"---> There is no message available");
+            //     await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            // }
         }
         
         private static bool ProcessMessage(Message msg)
@@ -72,13 +72,13 @@ namespace SQSDemoBackgroundService
             return true;
         }
         
-        private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl, int waitTime = 0, int maxMessages = 1)
+        private static async Task<List<Message>> ReceiveMessageAsync(IAmazonSQS client, string queueUrl)
         {
             var request = new ReceiveMessageRequest
             {
                 QueueUrl = queueUrl,
-                WaitTimeSeconds = waitTime,
-                MaxNumberOfMessages = maxMessages
+                WaitTimeSeconds = 10,
+                MaxNumberOfMessages = 10
             };
 
             var messages = await client.ReceiveMessageAsync(request);

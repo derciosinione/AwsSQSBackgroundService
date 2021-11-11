@@ -27,7 +27,7 @@ namespace SQSDemoBackgroundService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_ => Configuration);
-            services.AddHostedService<SqsBackGroundService>();
+            services.AddHostedService<SqsBackgroundService>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
