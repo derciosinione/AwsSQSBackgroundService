@@ -61,6 +61,30 @@ namespace SQSDemoBackgroundService
                 }
             }
         }
+
+        private static async Task ReadMessageAsync(IAmazonSQS sqsClient, string queueUrl, ReceiveMessageResponse response, CancellationToken stoppingToken)
+        {
+            if (response.Messages.Any())
+            {
+                Console.WriteLine($"{response.Messages.Count} messages received");
+
+                foreach (var msg in response.Messages)
+                {
+                    var result = ProcessMessage(msg);
+
+                    if (result)
+                    {
+                        Console.WriteLine($"{msg.MessageId} processed with success");
+                        // await DeleteMessageAsync(sqsClient, queueUrl, msg.ReceiptHandle);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"---> There is no message available");
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
+        }
         
         private static bool ProcessMessage(Message msg)
         {
