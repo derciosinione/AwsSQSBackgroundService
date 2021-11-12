@@ -66,7 +66,6 @@ namespace Service.QueueService
             }
             else
             {
-                LogInformation("No message available");
                 await Task.Delay(TimeSpan.FromSeconds(WaitDelayWhenNoMessages), stoppingToken);
             }
         }
