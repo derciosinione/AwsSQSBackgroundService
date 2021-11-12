@@ -31,7 +31,7 @@ namespace Service.QueueService
 
             var queueUrl = await queueService.GetQueueUrlAsync(QueueName);
             
-            _logger.LogInformation($"Starting polling queue : {QueueName}");
+            LogInformation($"Starting polling queue : {QueueName}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -42,7 +42,7 @@ namespace Service.QueueService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message);
+                    LogError(ex.Message);
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace Service.QueueService
         {
             if (messages.Any())
             {
-                _logger.LogInformation($"{messages.Count} messages received");
+                LogInformation($"{messages.Count} messages received");
 
                 foreach (var msg in messages)
                 {
@@ -59,19 +59,28 @@ namespace Service.QueueService
 
                     if (result)
                     {
-                        _logger.LogInformation($"{msg.MessageId} processed with success");
+                        LogInformation($"{msg.MessageId} processed with success");
                         await queueService.DeleteMessageAsync( queueUrl, msg.ReceiptHandle);
                     }
                 }
             }
             else
             {
-                _logger.LogInformation("No message available");
+                LogInformation("No message available");
                 await Task.Delay(TimeSpan.FromSeconds(WaitDelayWhenNoMessages), stoppingToken);
             }
         }
         
         protected abstract Task<bool> ProcessMessageAsync(QueueMessage msg);
         
+        protected virtual void LogInformation(string message)
+        {
+            _logger.LogInformation(message);
+        }
+        
+        protected virtual void LogError(string message)
+        {
+            _logger.LogError(message);
+        }
     }
 }
