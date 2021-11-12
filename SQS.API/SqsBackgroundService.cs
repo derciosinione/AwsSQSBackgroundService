@@ -114,6 +114,7 @@ namespace SQS.API
                 Console.WriteLine($"---> The Queue {queueName} has been created!!!");
                 return response.QueueUrl;
             }
+            
         }
     }
 }
