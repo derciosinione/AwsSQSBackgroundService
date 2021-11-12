@@ -4,6 +4,6 @@ namespace Service.QueueService
     {
         public string MessageId { get; set; }
         public string Body { get; set; } 
-        public string Handle { get; set; } 
+        public string ReceiptHandle { get; set; } 
     }
 }

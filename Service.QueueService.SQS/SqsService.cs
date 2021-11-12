@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Amazon.SQS;
@@ -54,9 +55,23 @@ namespace Service.QueueService.SQS
             return response.HttpStatusCode == HttpStatusCode.OK;
         }
 
-        public async Task<List<QueueMessage>> ReceiveMessageAsync(string queueUrl, int maxMessages = 1)
+        public async Task<List<QueueMessage>> ReceiveMessageAsync(string queueUrl, int waitTimeSeconds = 0, int maxMessages = 1)
         {
-            throw new System.NotImplementedException();
+            var request = new ReceiveMessageRequest
+            {
+                QueueUrl = queueUrl,
+                WaitTimeSeconds = 10,
+                MaxNumberOfMessages = maxMessages
+            };
+            
+            var messages = await _awsSqsClient.ReceiveMessageAsync(request);
+
+            return messages.Messages.Select(m => new QueueMessage
+            {
+                MessageId = m.MessageId,
+                Body = m.Body,
+                ReceiptHandle = m.ReceiptHandle
+            }).ToList();
         }
 
         public async Task DeleteMessageAsync(string queueUrl, string id)
