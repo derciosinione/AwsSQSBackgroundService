@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Service.QueueService.SQS\Service.QueueService.SQS.csproj" />
     <ProjectReference Include="..\Service.QueueService\Service.QueueService.csproj" />
   </ItemGroup>
 

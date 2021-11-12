@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Service.QueueService.SQS;
 
 namespace SQS.API
 {
@@ -28,6 +29,7 @@ namespace SQS.API
         {
             services.AddSingleton(_ => Configuration);
             services.AddHostedService<SqsBackgroundService>();
+            services.AddSqsService();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
