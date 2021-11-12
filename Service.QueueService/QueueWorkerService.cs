@@ -38,8 +38,7 @@ namespace Service.QueueService
                 try
                 {
                     var messages = await queueService.ReceiveMessageAsync(queueUrl, WaitTimeSeconds, MaxMessages);
-                    
-                    //TODO: Implement Read Messages
+                    await ReadMessageAsync(queueUrl, queueService, messages, stoppingToken);
                 }
                 catch (Exception ex)
                 {
