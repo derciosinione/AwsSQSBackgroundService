@@ -30,8 +30,6 @@ namespace Service.QueueService
             var queueService = scope.ServiceProvider.GetRequiredService<IQueueService>();
 
             var queueUrl = await queueService.GetQueueUrlAsync(QueueName);
-            
-            LogInformation($"Starting polling queue : {QueueName}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -51,7 +49,7 @@ namespace Service.QueueService
         {
             if (messages.Any())
             {
-                LogInformation($"{messages.Count} messages received");
+                LogInformation($"---> {messages.Count} messages received");
 
                 foreach (var msg in messages)
                 {
@@ -59,8 +57,8 @@ namespace Service.QueueService
 
                     if (result)
                     {
-                        LogInformation($"{msg.MessageId} processed with success");
                         await queueService.DeleteMessageAsync( queueUrl, msg.ReceiptHandle);
+                        LogInformation($"---> Message with Id: {msg.MessageId} processed with success!!!");
                     }
                 }
             }
