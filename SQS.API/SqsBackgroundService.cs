@@ -17,7 +17,7 @@ namespace SQS.API
 
         protected override async Task<bool> ProcessMessageAsync(QueueMessage msg)
         {
-            
+            LogInformation($"---> API Recived : {msg.Body}");
             return await Task.FromResult(true);
         }
     }
