@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
@@ -42,7 +43,15 @@ namespace Service.QueueService.SQS
 
         public async Task<bool> PublishToQueueAsync(string queueUrl, string message)
         {
-            throw new System.NotImplementedException();
+            var request = new SendMessageRequest
+            {
+                QueueUrl = queueUrl,
+                MessageBody = message
+            };
+            
+            var response = await _awsSqsClient.SendMessageAsync(request);
+
+            return response.HttpStatusCode == HttpStatusCode.OK;
         }
 
         public async Task<List<QueueMessage>> ReceiveMessageAsync(string queueUrl, int maxMessages = 1)
