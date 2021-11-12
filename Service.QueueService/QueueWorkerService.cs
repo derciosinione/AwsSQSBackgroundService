@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +32,47 @@ namespace Service.QueueService
             var queueUrl = await queueService.GetQueueUrlAsync(QueueName);
             
             _logger.LogInformation($"Starting polling queue : {QueueName}");
-            
-            
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var messages = await queueService.ReceiveMessageAsync(queueUrl, WaitTimeSeconds, MaxMessages);
+                    
+                    if (messages.Any())
+                    {
+                        _logger.LogInformation($"{messages.Count} messages received");
+
+                        foreach (var msg in messages)
+                        {
+                            var result = await ProcessMessageAsync(msg);
+
+                            if (result)
+                            {
+                                _logger.LogInformation($"{msg.MessageId} processed with success");
+                                await queueService.DeleteMessageAsync( queueUrl, msg.ReceiptHandle);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation("No message available");
+                        await Task.Delay(TimeSpan.FromSeconds(WaitDelayWhenNoMessages), stoppingToken);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
         }
+        
+        private static async Task ReadMessageAsync(List<QueueMessage> messages, CancellationToken stoppingToken)
+        {
+
+        }
+        
+
     }
 }
