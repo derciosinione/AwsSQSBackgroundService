@@ -76,7 +76,7 @@ namespace Service.QueueService.SQS
 
         public async Task DeleteMessageAsync(string queueUrl, string id)
         {
-            throw new System.NotImplementedException();
+            await _awsSqsClient.DeleteMessageAsync(queueUrl, id);
         }
     }
 }
