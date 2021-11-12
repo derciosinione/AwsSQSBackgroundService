@@ -2,7 +2,7 @@
 
 namespace Service.QueueService
 {
-    public class Class1
+    public class QueueWorkerService
     {
     }
 }
