@@ -1,6 +1,6 @@
 using System;
 
-namespace SQSDemoBackgroundService
+namespace SQS.API
 {
     public class WeatherForecast
     {

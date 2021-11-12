@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace SQSDemoBackgroundService.Controllers
+namespace SQS.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

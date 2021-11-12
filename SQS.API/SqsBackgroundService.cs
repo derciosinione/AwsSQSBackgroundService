@@ -9,7 +9,7 @@ using Amazon.SQS.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace SQSDemoBackgroundService
+namespace SQS.API
 {
     public class SqsBackgroundService : BackgroundService
     {
@@ -59,11 +59,11 @@ namespace SQSDemoBackgroundService
                     }
                 }
             }
-            // else
-            // {
-            //     Console.WriteLine($"---> There is no message available");
-            //     await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-            // }
+            else
+            {
+                Console.WriteLine($"---> There is no message available");
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
         }
         
         private static bool ProcessMessage(Message msg)

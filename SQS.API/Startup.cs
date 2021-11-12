@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace SQSDemoBackgroundService
+namespace SQS.API
 {
     public class Startup
     {
@@ -32,7 +32,7 @@ namespace SQSDemoBackgroundService
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SQSDemoBackgroundService", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SQS.API", Version = "v1" });
             });
         }
 
@@ -43,7 +43,7 @@ namespace SQSDemoBackgroundService
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SQSDemoBackgroundService v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SQS.API v1"));
             }
 
             app.UseHttpsRedirection();
