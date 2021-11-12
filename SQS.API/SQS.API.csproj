@@ -9,4 +9,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Service.QueueService.SQS\Service.QueueService.SQS.csproj" />
+    <ProjectReference Include="..\Service.QueueService\Service.QueueService.csproj" />
+  </ItemGroup>
+
 </Project>
