@@ -2,7 +2,7 @@
 
 namespace Service.QueueService.SQS
 {
-    public class Class1
+    public class Extensions
     {
     }
 }
