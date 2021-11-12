@@ -39,40 +39,40 @@ namespace Service.QueueService
                 {
                     var messages = await queueService.ReceiveMessageAsync(queueUrl, WaitTimeSeconds, MaxMessages);
                     
-                    if (messages.Any())
-                    {
-                        _logger.LogInformation($"{messages.Count} messages received");
-
-                        foreach (var msg in messages)
-                        {
-                            var result = await ProcessMessageAsync(msg);
-
-                            if (result)
-                            {
-                                _logger.LogInformation($"{msg.MessageId} processed with success");
-                                await queueService.DeleteMessageAsync( queueUrl, msg.ReceiptHandle);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _logger.LogInformation("No message available");
-                        await Task.Delay(TimeSpan.FromSeconds(WaitDelayWhenNoMessages), stoppingToken);
-                    }
+                    //TODO: Implement Read Messages
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e);
-                    throw;
+                    _logger.LogError(ex.Message);
                 }
             }
         }
         
-        private static async Task ReadMessageAsync(List<QueueMessage> messages, CancellationToken stoppingToken)
+        private async Task ReadMessageAsync(string queueUrl, IQueueService queueService,List<QueueMessage> messages, CancellationToken stoppingToken)
         {
+            if (messages.Any())
+            {
+                _logger.LogInformation($"{messages.Count} messages received");
 
+                foreach (var msg in messages)
+                {
+                    var result = await ProcessMessageAsync(msg);
+
+                    if (result)
+                    {
+                        _logger.LogInformation($"{msg.MessageId} processed with success");
+                        await queueService.DeleteMessageAsync( queueUrl, msg.ReceiptHandle);
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogInformation("No message available");
+                await Task.Delay(TimeSpan.FromSeconds(WaitDelayWhenNoMessages), stoppingToken);
+            }
         }
         
-
+        protected abstract Task<bool> ProcessMessageAsync(QueueMessage msg);
+        
     }
 }
