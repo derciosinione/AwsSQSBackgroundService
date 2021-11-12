@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Service.QueueService
 {
-    public class QueueWorkerService : BackgroundService
+    public abstract class QueueWorkerService : BackgroundService
     {
         protected string QueueName { get; set; }
         protected const int MaxMessages  = 10;
@@ -15,7 +16,6 @@ namespace Service.QueueService
         
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<QueueWorkerService> _logger;
-        
         public QueueWorkerService(IServiceProvider serviceProvider, ILogger<QueueWorkerService> logger)
         {
             _logger = logger;
@@ -23,7 +23,15 @@ namespace Service.QueueService
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
+            using var scope = _serviceProvider.CreateScope();
+
+            var queueService = scope.ServiceProvider.GetRequiredService<IQueueService>();
+
+            var queueUrl = await queueService.GetQueueUrlAsync(QueueName);
+            
+            _logger.LogInformation($"Starting polling queue : {QueueName}");
+            
+            
         }
     }
 }
